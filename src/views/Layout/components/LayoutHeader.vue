@@ -2,13 +2,20 @@
 import {getCategoryAPI} from '@/apis/Layout'
 import { onMounted,ref } from 'vue';
 
+// ref 让普通的 JavaScript 变量变成响应式，当值改变时，使用这个值的界面也会自动更新。
 const categoryList = ref([])
 const getCategory = async() => {
   const res = await getCategoryAPI()
   console.log(res);
   categoryList.value = res.result
 }
+// 当组件完全加载到页面上后，就立即执行 getCategory() 函数
+// 在 LayoutHeader.vue 文件中，onMounted 确保了在页面加载完成后：
 
+// 自动调用 getCategory() 函数
+// 获取分类数据并存入 categoryList
+// 使导航栏能够显示分类菜单项
+// 这样用户打开页面时就能看到完整的头部导航，而不是空白的导航栏。
 onMounted(() => {
   getCategory()
 })
