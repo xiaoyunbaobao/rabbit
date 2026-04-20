@@ -5,14 +5,14 @@ import { findNewAPI } from '@/apis/home';
 
 // 获取数量
 const newList = ref([])
-const getNNewList = async () => {
+const getNewList = async () => {
   const res = await findNewAPI()
   newList.value = res.result
 }
 
 
 onMounted(() => 
-  getNNewList()
+  getNewList()
 )
 </script>
 
