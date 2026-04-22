@@ -17,6 +17,8 @@ onMounted(() => categoryStore.getCategory())
   <LayoutFixed />
   <LayoutNav />
   <LayoutHeader />
+  <!-- 添加key 破坏复用机制 强制销毁重建 达到点击什么分类就重新渲染组件的效果 -->
+  <!-- <RouterView :key="$route.fullPath" /> -->
   <RouterView />
   <LayoutFooter />
 </template>
