@@ -37,6 +37,25 @@ const getCategoryData = async()=>{
     console.log('tab切换了', reqData.value.sortField);
     getGoodsList()
   }
+
+
+
+  // 加载更多
+  // const disabled = ref(false)
+  // const load = async () => {
+  //   console.log('加载更多数据');
+  //   // 获取下一页数据
+  //   reqData.value.page++
+  //   const res = await getSubCategoryAPI(reqData.value)
+  //   goodsList.value = [...goodsList.value, ...res.result.items]
+  // }
+
+  // // 加载完毕 停止监听
+  // if(res.result.items.length === 0){
+  //   console.log('没有更多数据了');
+  //   // 停止监听
+  //   disabled.value = true
+  // }
 </script>
 
 <template>
