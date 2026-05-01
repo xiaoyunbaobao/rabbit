@@ -23,6 +23,11 @@ const handleLogout = () => {
       <ul>
         <!-- 多模块渲染 区分登录状态还是未登录状态 -->
         <!-- ✨【改动5】将硬编码的 false 改为根据用户是否登录来判断 -->
+         <!-- 这里通过判断token来判断登陆状态 这里if写的是有token 找<template></template>就可以 -->
+
+
+
+         <!-- 💡通用思路:有几个需要适配的模块就准备几个<template></template> 通过条件判断即可 -->
         <template v-if="userStore.userInfo?.token">
           <!-- ✨【改动6】显示实际登录的用户名，而不是硬编码的"郭奕玮" -->
           <li><a href="javascript:;"><i class="iconfont icon-user"></i>{{ userStore.userInfo.account }}</a></li>
@@ -37,6 +42,7 @@ const handleLogout = () => {
           <li><a href="javascript:;">我的订单</a></li>
           <li><a href="javascript:;">会员中心</a></li>
         </template>
+        <!-- 这里else则是未登录状态 同样通过看<template></template> -->
         <template v-else>
           <li><a href="javascript:;" @click="$router.push('/login')">请先登录</a></li>
           <li><a href="javascript:;">帮助中心</a></li>
