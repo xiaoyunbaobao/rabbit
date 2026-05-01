@@ -2,6 +2,12 @@
 
 // 表单校验(账户名+密码)
 import { ref } from 'vue';
+import { loginAPI } from '@/apis/users'
+import { ElMessage } from 'element-plus'
+import 'element-plus/theme-chalk/el-message.css'
+import { useRouter } from 'vue-router';
+import router from '@/router';
+
 // 1.准备表单对象
 const form = ref({
   account: '',
@@ -44,10 +50,20 @@ const rules = {
 // 获取form实例做统一校验 防止用户一上来就点击登录
 const formRef = ref(null)
 const doLogin = () => {
+  const {account, password} = form.value
   // 调用实例方法
-  formRef.value.validate((valid) => {
+  formRef.value.validate(async (valid) => {
     // valid表示所有表单都通过校验 才返回true
     console.log(valid);
+    // 以参数valid作为判断条件 通过校验才执行登录逻辑
+    if(valid){
+      const res = await loginAPI({account, password})
+      console.log(res);
+      // 1.提示用户
+      ElMessage({type:'success', message:'登录成功'})
+      // 2.跳转首页
+      router.replace({path: '/' })
+    }
   })
 }
 </script>
