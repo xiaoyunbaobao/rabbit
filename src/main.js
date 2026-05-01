@@ -15,6 +15,8 @@ import { LazyPlugin } from "@/directives";
 // getCategory().then(res => {
 //   console.log(res)
 // })
+// 引入全局组件插件
+import { componentPlugin } from './components'
 const app = createApp(App)
 
 
@@ -22,6 +24,7 @@ app.use(createPinia())
 app.use(router)
 // 使用src/directives里手写的懒加载插件指令
 app.use(LazyPlugin)
+app.use(componentPlugin)
 app.mount('#app')
 // directive是一个对象 用于注册对当前组件实例可用的指令
 // app.directive('img-lazy', {
