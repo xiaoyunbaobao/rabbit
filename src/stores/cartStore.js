@@ -12,6 +12,9 @@ export const useCartStore = defineStore('cart', () => {
   // ref() - 创建响应式变量
   const cartList = ref(JSON.parse(localStorage.getItem('cartList') || '[]'))
   const userStore = useUserStore()
+
+
+  // 添加购物车逻辑
   const addCart = (goods) => {
     // 已添加过:count + 1
     // 没添加过: 直接push
@@ -29,6 +32,7 @@ export const useCartStore = defineStore('cart', () => {
     // 每次添加或修改商品数量后都要保存
     localStorage.setItem('cartList', JSON.stringify(cartList.value))
   }
+
   // 删除购物车
   const delCart = (skuId) => {
     // 思路:找到删除项的下标值-splice
@@ -37,6 +41,7 @@ export const useCartStore = defineStore('cart', () => {
     cartList.value.splice(idx, 1)
     localStorage.setItem('cartList', JSON.stringify(cartList.value))
   }
+
   /**
  * 更新购物车商品数量
  * @param {Object} goods - 包含 skuId 和新数量的对象
@@ -53,19 +58,33 @@ export const useCartStore = defineStore('cart', () => {
       localStorage.setItem('cartList', JSON.stringify(cartList.value))
     }
   }
+  // 全选功能
+  const allCheck = (selected) => {
+    // 把cartList中的每一项selected都设置成当前全选框状态
+    cartList.value.forEach(item => item.selected = selected);
+    localStorage.setItem('cartList', JSON.stringify(cartList.value))
+  }
+
   // 计算属性
   // 1.总数量 所有项count之和
   // reduce接收两个参数 a---每次累加完的值 c---每一项
   const allCount = computed(() => cartList.value.reduce((a, c) => a + c.count, 0))
   // 2.总价格 所有项目count*price之和
   const allPrice = computed(() => cartList.value.reduce((a, c) => a + c.count * c.price, 0))
+
+
+  // 是否全选
+  const isAll = computed(() => cartList.value.every((item) => item.selected))
+
   return {
     cartList,
     allCount,
     allPrice,
+    isAll,
     addCart,
     delCart,
-    updateCount
+    updateCount,
+    allCheck
   }
 })
 

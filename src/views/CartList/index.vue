@@ -6,6 +6,9 @@ const singleCheck = (i, selected) => {
   i.selected = selected
   localStorage.setItem('cartList', JSON.stringify(cartStore.cartList))
 }
+const allCheck = (selected) => {
+  cartStore.allCheck(selected)
+}
 const countChange = (item) => {
   cartStore.updateCount({skuId: item.skuId, count: item.count})
 }
@@ -22,7 +25,7 @@ const delCart = (item) => {
           <thead>
             <tr>
               <th width="120">
-                <el-checkbox/>
+                <el-checkbox v-model="cartStore.isAll" @change="allCheck" />
               </th>
               <th width="400">商品信息</th>
               <th width="220">单价</th>
@@ -36,7 +39,7 @@ const delCart = (item) => {
             <tr v-for="i in cartStore.cartList" :key="i.id">
               <td>
                 <!-- 单选框 -->
-                <el-checkbox :modle-value="i.selected" @change="(selected) => singleCheck(i, selected)"/>
+                <el-checkbox :model-value="i.selected" @change="(selected) => singleCheck(i, selected)"/>
               </td>
               <td>
                 <div class="goods">
