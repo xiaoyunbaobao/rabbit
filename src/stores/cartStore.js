@@ -6,7 +6,11 @@ import { insertCartAPI, getNewCartListAPI } from "@/apis/Cart";
 const isLogin = computed(() => userStore.userInfo?.token)
 const cartList = ref([])
 export const useCartStore = defineStore('cart', () => {
-  const cartList = ref([])
+  //   localStorage.getItem('cartList') - 尝试获取名为 'cartList' 的缓存数据
+  // || '[]' - 如果没有数据（第一次访问），使用空数组作为默认值
+  // JSON.parse() - 将字符串转换为 JavaScript 数组
+  // ref() - 创建响应式变量
+  const cartList = ref(JSON.parse(localStorage.getItem('cartList') || '[]'))
   const userStore = useUserStore()
   const addCart = (goods) => {
     // 已添加过:count + 1
@@ -20,6 +24,10 @@ export const useCartStore = defineStore('cart', () => {
     } else {
       cartList.value.push(goods)
     }
+    //JSON.stringify(cartList.value) - 将数组转换为 JSON 字符串
+    // localStorage.setItem('cartList', ...) - 保存到浏览器本地存储
+    // 每次添加或修改商品数量后都要保存
+    localStorage.setItem('cartList', JSON.stringify(cartList.value))
   }
   // 删除购物车
   const delCart = (skuId) => {
@@ -27,6 +35,23 @@ export const useCartStore = defineStore('cart', () => {
     // 思路:使用数组过滤-fliter
     const idx = cartList.value.findIndex((item) => skuId === item.skuId)
     cartList.value.splice(idx, 1)
+    localStorage.setItem('cartList', JSON.stringify(cartList.value))
+  }
+  /**
+ * 更新购物车商品数量
+ * @param {Object} goods - 包含 skuId 和新数量的对象
+ */
+  const updateCount = (goods) => {
+    // 1. 在购物车列表中查找对应的商品
+    const item = cartList.value.find((item) => goods.skuId === item.skuId)
+
+    // 2. 如果找到了，更新数量
+    if (item) {
+      item.count = goods.count
+
+      // 3. 保存到 localStorage，实现持久化
+      localStorage.setItem('cartList', JSON.stringify(cartList.value))
+    }
   }
   // 计算属性
   // 1.总数量 所有项count之和
@@ -39,7 +64,8 @@ export const useCartStore = defineStore('cart', () => {
     allCount,
     allPrice,
     addCart,
-    delCart
+    delCart,
+    updateCount
   }
 })
 

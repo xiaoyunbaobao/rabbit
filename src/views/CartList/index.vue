@@ -1,6 +1,17 @@
 <script setup>
 import { useCartStore } from '@/stores/cartStore';
 const cartStore = useCartStore()
+const singleCheck = (i, selected) => {
+  console.log(i, selected);
+  i.selected = selected
+  localStorage.setItem('cartList', JSON.stringify(cartStore.cartList))
+}
+const countChange = (item) => {
+  cartStore.updateCount({skuId: item.skuId, count: item.count})
+}
+const delCart = (item) => {
+  cartStore.delCart(item.skuId)
+}
 </script>
 
 <template>
@@ -24,7 +35,8 @@ const cartStore = useCartStore()
           <tbody>
             <tr v-for="i in cartStore.cartList" :key="i.id">
               <td>
-                <el-checkbox />
+                <!-- 单选框 -->
+                <el-checkbox :modle-value="i.selected" @change="(selected) => singleCheck(i, selected)"/>
               </td>
               <td>
                 <div class="goods">
@@ -40,7 +52,7 @@ const cartStore = useCartStore()
                 <p>&yen;{{ i.price }}</p>
               </td>
               <td class="tc">
-                <el-input-number v-model="i.count" />
+                <el-input-number v-model="i.count" @change="countChange(i)" />
               </td>
               <td class="tc">
                 <p class="f16 red">&yen;{{ (i.price * i.count).toFixed(2) }}</p>
