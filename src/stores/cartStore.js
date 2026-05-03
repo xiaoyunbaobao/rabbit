@@ -28,8 +28,16 @@ export const useCartStore = defineStore('cart', () => {
     const idx = cartList.value.findIndex((item) => skuId === item.skuId)
     cartList.value.splice(idx, 1)
   }
+  // 计算属性
+  // 1.总数量 所有项count之和
+  // reduce接收两个参数 a---每次累加完的值 c---每一项
+  const allCount = computed(() => cartList.value.reduce((a, c) => a + c.count, 0))
+  // 2.总价格 所有项目count*price之和
+  const allPrice = computed(() => cartList.value.reduce((a, c) => a + c.count * c.price, 0))
   return {
     cartList,
+    allCount,
+    allPrice,
     addCart,
     delCart
   }
