@@ -12,6 +12,7 @@ export const useCartStore = defineStore('cart', () => {
   // ref() - 创建响应式变量
   const cartList = ref(JSON.parse(localStorage.getItem('cartList') || '[]'))
   const userStore = useUserStore()
+  const isLogin = computed(() => userStore.userInfo.token)
 
 
   // 添加购物车逻辑
@@ -101,13 +102,14 @@ export const useCartStore = defineStore('cart', () => {
 const addCart = async (goods) => {
   const { skuId, count } = goods
   if (isLogin.value) {
-    // TODO: 这里添加已登录时的购物车逻辑
+    // 已登录：调用后端 API
     await insertCartAPI({ skuId, count })
     const res = await getNewCartListAPI()
     cartList.value = res.result
+    return true // ✨【改动1】添加成功返回 true
   } else {
-    // 未登录，返回 false 让调用方处理
-
+    // ✨【改动2】未登录：返回 false 让调用方处理登录逻辑
+    return false
   }
 }
 
