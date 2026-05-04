@@ -6,7 +6,6 @@ import DetailHot from './components/DetailHot.vue';
 import { ElMessage } from 'element-plus';
 import { useCartStore } from '@/stores/cartStore';
 const cartStore = useCartStore()
-const showLoginModal = ref(false) // ✨【改动2】控制登录弹窗显示
 const goods = ref({})
 const route = useRoute()
 const count = ref([])
@@ -33,10 +32,10 @@ const skuChange = (sku) => {
   skuObj = sku
 }
 
-const addCart = async () => {
+const addCart = () => {
   if(skuObj.skuId){
     // 规格选择完毕 触发action
-    const success = await cartStore.addCart({
+    cartStore.addCart({
       id: goods.value.id,
       name: goods.value.name,
       picture: goods.value.mainPictures[0],
@@ -46,13 +45,6 @@ const addCart = async () => {
       attrsText: skuObj.specsText,
       selected: true
     })
-    
-    // ✨【改动3】根据返回值判断是否显示登录弹窗
-    if (!success) {
-      showLoginModal.value = true
-    } else {
-      ElMessage.success('添加成功')
-    }
   }else
   {
     // 规格没有选择 提示用户

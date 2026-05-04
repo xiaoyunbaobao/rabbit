@@ -1,11 +1,11 @@
 // 封装购物车相关接口
 import request from '@/utils/http'
-export const insertCartAPI = () => {
+export const insertCartAPI = ({ skuId, count }) => {
   return request({
     url: '/member/cart',
     method: 'POST',
     data: {
-      skuid,
+      skuId,
       count
     }
   })
@@ -16,5 +16,17 @@ export const getNewCartListAPI = () => {
   return request({
     url: '/member/cart',
     method: 'GET'
+  })
+}
+
+
+// 删除购物车
+export const delCartAPI = (ids) => {
+  return request({
+    url: '/member/cart',
+    method: 'DELETE',
+    data: {
+      ids
+    }
   })
 }

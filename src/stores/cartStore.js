@@ -1,9 +1,10 @@
 import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 import { useUserStore } from "./user";
-import { insertCartAPI, getNewCartListAPI } from "@/apis/Cart";
+import { insertCartAPI, getNewCartListAPI, delCartAPI } from "@/apis/Cart";
 
-const isLogin = computed(() => userStore.userInfo?.token)
+// 获取最新购物车列表action
+
 const cartList = ref([])
 export const useCartStore = defineStore('cart', () => {
   //   localStorage.getItem('cartList') - 尝试获取名为 'cartList' 的缓存数据
@@ -14,39 +15,57 @@ export const useCartStore = defineStore('cart', () => {
   const userStore = useUserStore()
   const isLogin = computed(() => userStore.userInfo.token)
 
-
   // 添加购物车逻辑
-  const addCart = (goods) => {
-    // 已添加过:count + 1
-    // 没添加过: 直接push
-    // 在cartList中看能否找到skuId 找到就是添加过
-    const item = cartList.value.find((item) =>
-      goods.skuId === item.skuId
-    )
-    if (item) {
-      item.count++
+  const addCart = async (goods) => {
+    const { skuId, count } = goods
+    if (isLogin.value) {
+      // TODO: 这里添加已登录时的购物车逻辑
+      await insertCartAPI({ skuId, count })
+      const res = await getNewCartListAPI()
+      cartList.value = res.result
     } else {
-      cartList.value.push(goods)
+      // 未登录，返回 false 让调用方处理
+      // 添加购物车逻辑
+      // 已添加过:count + 1
+      // 没添加过: 直接push
+      // 在cartList中看能否找到skuId 找到就是添加过
+      const item = cartList.value.find((item) =>
+        goods.skuId === item.skuId
+      )
+      if (item) {
+        item.count++
+      } else {
+        cartList.value.push(goods)
+      }
+      //JSON.stringify(cartList.value) - 将数组转换为 JSON 字符串
+      // localStorage.setItem('cartList', ...) - 保存到浏览器本地存储
+      // 每次添加或修改商品数量后都要保存
+      localStorage.setItem('cartList', JSON.stringify(cartList.value))
     }
-    //JSON.stringify(cartList.value) - 将数组转换为 JSON 字符串
-    // localStorage.setItem('cartList', ...) - 保存到浏览器本地存储
-    // 每次添加或修改商品数量后都要保存
-    localStorage.setItem('cartList', JSON.stringify(cartList.value))
   }
+
 
   // 删除购物车
-  const delCart = (skuId) => {
-    // 思路:找到删除项的下标值-splice
-    // 思路:使用数组过滤-fliter
-    const idx = cartList.value.findIndex((item) => skuId === item.skuId)
-    cartList.value.splice(idx, 1)
-    localStorage.setItem('cartList', JSON.stringify(cartList.value))
+  const delCart = async (skuId) => {
+    if (isLogin.value) {
+      // 调用接口实现接口购物车删除
+      await delCartAPI([skuId])
+      const res = await getNewCartListAPI()
+      cartList.value = res.result
+    } else {
+      // 思路:找到删除项的下标值-splice
+      // 思路:使用数组过滤-fliter
+      const idx = cartList.value.findIndex((item) => skuId === item.skuId)
+      cartList.value.splice(idx, 1)
+      localStorage.setItem('cartList', JSON.stringify(cartList.value))
+    }
   }
 
+
   /**
- * 更新购物车商品数量
- * @param {Object} goods - 包含 skuId 和新数量的对象
- */
+* 更新购物车商品数量
+* @param {Object} goods - 包含 skuId 和新数量的对象
+*/
   const updateCount = (goods) => {
     // 1. 在购物车列表中查找对应的商品
     const item = cartList.value.find((item) => goods.skuId === item.skuId)
@@ -92,6 +111,7 @@ export const useCartStore = defineStore('cart', () => {
     isAll,
     selectedCount,
     selectedPrice,
+    delCartAPI,
     addCart,
     delCart,
     updateCount,
@@ -99,18 +119,3 @@ export const useCartStore = defineStore('cart', () => {
   }
 })
 
-const addCart = async (goods) => {
-  const { skuId, count } = goods
-  if (isLogin.value) {
-    // 已登录：调用后端 API
-    await insertCartAPI({ skuId, count })
-    const res = await getNewCartListAPI()
-    cartList.value = res.result
-    return true // ✨【改动1】添加成功返回 true
-  } else {
-    // ✨【改动2】未登录：返回 false 让调用方处理登录逻辑
-    return false
-  }
-}
-
-export { addCart }
