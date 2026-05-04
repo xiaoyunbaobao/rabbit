@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import { useUserStore } from "./user";
 import { insertCartAPI, getNewCartListAPI, delCartAPI } from "@/apis/Cart";
 
-// 获取最新购物车列表action
+
 
 const cartList = ref([])
 export const useCartStore = defineStore('cart', () => {
@@ -14,7 +14,11 @@ export const useCartStore = defineStore('cart', () => {
   const cartList = ref(JSON.parse(localStorage.getItem('cartList') || '[]'))
   const userStore = useUserStore()
   const isLogin = computed(() => userStore.userInfo.token)
-
+  // 获取最新购物车列表action
+  const updateNewList = async () => {
+    const res = await getNewCartListAPI()
+    cartList.value = res.result
+  }
   // 添加购物车逻辑
   const addCart = async (goods) => {
     const { skuId, count } = goods
@@ -119,7 +123,8 @@ export const useCartStore = defineStore('cart', () => {
     delCart,
     updateCount,
     allCheck,
-    clearCart
+    clearCart,
+    updateNewList
   }
 })
 

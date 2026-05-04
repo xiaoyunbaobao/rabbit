@@ -3,6 +3,7 @@ import { loginAPI } from '@/apis/users'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useCartStore } from './cartStore'
+import { mergeCartAPI } from '@/apis/Cart'
 export const useUserStore = defineStore('user', () => {
   const cartStore = useCartStore()
   // 1.定义管理用户数据的state
@@ -15,6 +16,16 @@ export const useUserStore = defineStore('user', () => {
     userInfo.value = res.result
     // 登录成功后，将用户信息保存到 localStorage
     localStorage.setItem('userInfo', JSON.stringify(userInfo.value))
+    // 合并购物车操作
+    // 根据一个现有数组得到一个新的数组 用map方法
+    mergeCartAPI(cartStore.cartList.map(item => {
+      return {
+        skuId: item.skuId,
+        selected: item.selected,
+        count: item.count
+      }
+    }))
+    cartStore.updateNewList()
   }
 
   // 3.退出登录时清除用户信息和缓存
