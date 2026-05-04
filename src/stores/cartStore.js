@@ -68,10 +68,18 @@ export const useCartStore = defineStore('cart', () => {
   // 计算属性
   // 1.总数量 所有项count之和
   // reduce接收两个参数 a---每次累加完的值 c---每一项
+  //a (accumulator): 累加器,存储上一次回调的返回值
+  //c (currentValue): 当前正在处理的元素
+  // 0: 初始值,第一次调用时的 a 值
   const allCount = computed(() => cartList.value.reduce((a, c) => a + c.count, 0))
   // 2.总价格 所有项目count*price之和
   const allPrice = computed(() => cartList.value.reduce((a, c) => a + c.count * c.price, 0))
 
+  // 3.已选择数量
+  const selectedCount = computed(() => cartList.value.filter(item => item.selected).reduce((a, c) => a + c.count, 0))
+
+  // 4.已选择商品总价格
+  const selectedPrice = computed(() => cartList.value.filter(item => item.selected).reduce((a, c) => a + c.count * c.price, 0))
 
   // 是否全选
   const isAll = computed(() => cartList.value.every((item) => item.selected))
@@ -81,6 +89,8 @@ export const useCartStore = defineStore('cart', () => {
     allCount,
     allPrice,
     isAll,
+    selectedCount,
+    selectedPrice,
     addCart,
     delCart,
     updateCount,
