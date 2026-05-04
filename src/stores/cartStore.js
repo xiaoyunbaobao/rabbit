@@ -61,7 +61,10 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
-
+  // 清空购物车
+  const clearCart = () => {
+    cartList.value = []
+  }
   /**
 * 更新购物车商品数量
 * @param {Object} goods - 包含 skuId 和新数量的对象
@@ -115,7 +118,8 @@ export const useCartStore = defineStore('cart', () => {
     addCart,
     delCart,
     updateCount,
-    allCheck
+    allCheck,
+    clearCart
   }
 })
 
