@@ -2,6 +2,8 @@
 import { getCheckInfoAPI, createOrderAPI } from '@/apis/checkout';
 import {useRouter} from 'vue-router'
 import { onMounted, ref } from 'vue';
+import {useCartStore} from '@/stores/cartStore'
+const cartStore = useCartStore()
 const router = useRouter()
 const checkInfo = ref({})  // 订单对象
 const curAddress = ref({})//默认地址
@@ -53,6 +55,8 @@ const createOrder =async() => {
       id: orderId
     }
   })
+  // 更新购物车 购买之后就在购物车清除
+  cartStore.updateNewList()
 }
 </script>
 
